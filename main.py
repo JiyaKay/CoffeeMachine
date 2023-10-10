@@ -67,20 +67,12 @@ def report():
 
 
 # Checks if there's enough resources available for making the requested coffee
-def check_resources():
-    # Checking if resources available is greater than or equals to the amount required by latte or cappuccino
-    # If it is enough, returns 1 else 0
-    if coffee_choice != 'espresso':
-        if resources["water"] >= MENU[coffee_choice]["ingredients"]["water"] and resources["coffee"] >= MENU[coffee_choice]["ingredients"]["coffee"] and resources["milk"] >= MENU[coffee_choice]["ingredients"]["milk"]:
-            return 1
-        else:
-            return 0
-    # Checking the same for espresso
-    else:
-        if resources["water"] >= MENU[coffee_choice]["ingredients"]["water"] and resources["coffee"] >= MENU[coffee_choice]["ingredients"]["coffee"]:
-            return 1
-        else:
-            return 0
+def check_resources(order_ingredients):
+    for item in order_ingredients:
+        if resources[item] < order_ingredients[item]:
+            print(f"There's not enough {item}.")
+            return False
+    return True
 
 
 # Loop (machine) will continue to run till machine_off variable becomes true
@@ -95,11 +87,8 @@ while not machine_off:
     elif coffee_choice == 'off':
         machine_off = True
     else:
-        # Checking if the resources are available
-        check_value = check_resources()
-        if check_value == 0:
-            print("Sorry, there's not enough resources.")
-        else:
+        # Checking if the resources are available, if sufficient - continue
+        if check_resources(MENU[coffee_choice]["ingredients"]):
             amount_given = coins()
             # Checking if amount given is sufficient
             if amount_given == 0:
